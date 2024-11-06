@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# API Key from OpenWeatherMap
+API_KEY=" f750e5d21b5d7c2414fac20f3183071f"
+# API URL
+API_URL="https://openweathermap.org/api/one-call-3"
+
+# Get the city name from the user
+echo "Bahraich:"
+read CITY
+
+# Fetch weather data using curl
+RESPONSE=$(curl -s "$API_URL?q=$CITY,IN&appid=$API_KEY&units=metric")
+
+# Extract relevant data using jq (optional)
+TEMP=$(echo $RESPONSE | jq '.main.temp')
+DESCRIPTION=$(echo $RESPONSE | jq -r '.weather[0].description')
+HUMIDITY=$(echo $RESPONSE | jq '.main.humidity')
+WIND_SPEED=$(echo $RESPONSE | jq '.wind.speed')
+
+# Check if the API request was successful
+if [ -z "$TEMP" ]; then
+  echo "Error: Could not fetch weather data. Please check the city name and try again."
+else
+  # Display weather information
+  echo "Weather in $CITY:"
+  echo "Temperature: $TEMP°C"
+  echo "Description: $DESCRIPTION"
+  echo "Humidity: $HUMIDITY%"
+  echo "Wind Speed: $WIND_SPEED m/s"
+fi
